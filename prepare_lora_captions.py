@@ -51,7 +51,7 @@ def describe_image(path_to_image, base_meme, alt_text):
                 },
                 {
                     'role': 'user',
-                    'content': """Provide a concise description of this image for LoRA training. 
+                    'content': f"""Provide a concise description of this image for LoRA training. 
                     Focus on main objects, style, colors, and any notable visual features. 
                     Don't describe the text in the picture, I already have an accurate description.
                     Base meme is: {base_meme}
