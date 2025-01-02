@@ -24,7 +24,7 @@ def download_image(url, save_path):
                 f.write(response.content)
             return True
         except requests.exceptions.HTTPError as e:
-            if e.response.status_code == 429:  # Too Many Requests
+            if e.response.status_code == 429 or e.response.status_code == 502:  # Too Many Requests
                 delay = base_delay * (2 ** attempt)  # Exponential backoff
                 print(f"Rate limited on {url}, attempt {attempt + 1}/{max_retries}, waiting {delay} seconds...")
                 time.sleep(delay)
