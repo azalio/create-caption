@@ -14,6 +14,8 @@ def download_image(url, save_path):
     max_retries = 5
     base_delay = 1  # Start with 1 second delay
     
+    print(f"Trying to download image {url}")
+
     for attempt in range(max_retries):
         try:
             response = requests.get(url, timeout=300, headers=headers)
@@ -36,7 +38,7 @@ def download_image(url, save_path):
     print(f"Max retries ({max_retries}) exceeded for {url}")
     return False
 
-def describe_image(path_to_image):
+def describe_image(path_to_image, base_meme, alt_text):
     try:
         res = ollama.chat(
             model="llava:13b",
@@ -49,7 +51,11 @@ def describe_image(path_to_image):
                 },
                 {
                     'role': 'user',
-                    'content': """Provide a concise description of this image for LoRA training. Focus on main objects, style, colors, and any notable visual features. Don't describe the text in the picture, I already have an accurate description.""",
+                    'content': """Provide a concise description of this image for LoRA training. 
+                    Focus on main objects, style, colors, and any notable visual features. 
+                    Don't describe the text in the picture, I already have an accurate description.
+                    Base meme is: {base_meme}
+                    Text on image: {alt_text}""",
                     'images': [path_to_image]
                 }
             ]
@@ -80,7 +86,7 @@ def process_meme_row(row, output_dir):
         return
         
     # Get description from LLaVA
-    description = describe_image(image_path)
+    description = describe_image(image_path, base_meme, alt_text)
     
     # Write caption file
     with open(txt_path, 'w', encoding='utf-8') as f:
