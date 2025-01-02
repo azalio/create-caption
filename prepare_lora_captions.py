@@ -32,7 +32,7 @@ def describe_image(path_to_image):
                 },
                 {
                     'role': 'user',
-                    'content': """Provide a concise description of this image for LoRA training. Focus on main objects, style, colors, and any notable visual features.""",
+                    'content': """Provide a concise description of this image for LoRA training. Focus on main objects, style, colors, and any notable visual features. Don't describe the text in the picture, I already have an accurate description.""",
                     'images': [path_to_image]
                 }
             ]
