@@ -43,7 +43,23 @@ def process_memes(csv_path, output_dir):
     # Create output directory if it doesn't exist
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     
-    with open(csv_path, newline='', encoding='utf-8') as csvfile:
+    # Try different encodings
+    encodings = ['utf-8', 'utf-16', 'windows-1251', 'cp1251', 'iso-8859-1']
+    
+    for encoding in encodings:
+        try:
+            with open(csv_path, newline='', encoding=encoding) as csvfile:
+                reader = csv.DictReader(csvfile, delimiter='\t')
+                # Test read first row
+                next(reader)
+                # If successful, reopen and process
+                break
+        except (UnicodeError, StopIteration):
+            continue
+    else:
+        raise ValueError(f"Could not determine encoding for {csv_path}")
+    
+    with open(csv_path, newline='', encoding=encoding) as csvfile:
         reader = csv.DictReader(csvfile, delimiter='\t')
         
         for row in reader:
