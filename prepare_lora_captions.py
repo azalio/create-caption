@@ -117,6 +117,6 @@ if __name__ == "__main__":
     output_directory = 'lora_captions'
     
     # Number of threads to use
-    num_threads = 10
+    num_threads = 2
     
     process_memes(csv_file, output_directory, num_threads)
