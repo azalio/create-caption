@@ -1,6 +1,7 @@
 import csv
 import os
 import requests
+import time
 from urllib.parse import urlparse
 import ollama
 from pathlib import Path
@@ -10,15 +11,30 @@ def download_image(url, save_path):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15'
     }
-    try:
-        response = requests.get(url, timeout=300, headers=headers)
-        response.raise_for_status()
-        with open(save_path, 'wb') as f:
-            f.write(response.content)
-        return True
-    except Exception as e:
-        print(f"Failed to download {url}: {e}")
-        return False
+    max_retries = 5
+    base_delay = 1  # Start with 1 second delay
+    
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, timeout=300, headers=headers)
+            response.raise_for_status()
+            with open(save_path, 'wb') as f:
+                f.write(response.content)
+            return True
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 429:  # Too Many Requests
+                delay = base_delay * (2 ** attempt)  # Exponential backoff
+                print(f"Rate limited on {url}, attempt {attempt + 1}/{max_retries}, waiting {delay} seconds...")
+                time.sleep(delay)
+                continue
+            print(f"Failed to download {url}: {e}")
+            return False
+        except Exception as e:
+            print(f"Failed to download {url}: {e}")
+            return False
+    
+    print(f"Max retries ({max_retries}) exceeded for {url}")
+    return False
 
 def describe_image(path_to_image):
     try:
