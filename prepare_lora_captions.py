@@ -2,6 +2,8 @@ import csv
 import os
 import requests
 import time
+from random import randint
+from time import sleep
 from urllib.parse import urlparse
 import ollama
 from pathlib import Path
@@ -12,7 +14,7 @@ def download_image(url, save_path):
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15'
     }
     max_retries = 5
-    base_delay = 1  # Start with 1 second delay
+    base_delay = 20  # Start with 1 second delay
     
     print(f"Trying to download image {url}")
 
@@ -82,6 +84,7 @@ def process_meme_row(row, output_dir):
         return
     
     # Download image
+    sleep(randint(1,5))
     if not download_image(image_url, image_path):
         return
         
@@ -139,6 +142,6 @@ if __name__ == "__main__":
     output_directory = 'lora_captions'
     
     # Number of threads to use
-    num_threads = 1
+    num_threads = 2
     
     process_memes(csv_file, output_directory, num_threads)
