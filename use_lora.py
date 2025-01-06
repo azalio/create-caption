@@ -1,16 +1,19 @@
 import torch
 from diffusers import StableDiffusionPipeline
+from safetensors.torch import load_file
 
 # Use local LoRA model
 LORA_PATH = "./my_first_flux_lora_v1.safetensors"
 
-# Load base model and apply LoRA weights
+# Load base model
 pipe = StableDiffusionPipeline.from_pretrained(
     "runwayml/stable-diffusion-v1-5",
-    torch_dtype=torch.float16
-).to("cuda" if torch.cuda.is_available() else "cpu")
+    torch_dtype=torch.float32  # Use float32 for CPU compatibility
+)
 
-pipe.unet.load_attn_procs(LORA_PATH)
+# Load LoRA weights directly from file
+lora_weights = load_file(LORA_PATH)
+pipe.unet.load_state_dict(lora_weights, strict=False)
 
 # Generate image
 prompt = "a futuristic FLUX meme in cyberpunk style"
