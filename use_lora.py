@@ -1,12 +1,8 @@
 import torch
 from diffusers import StableDiffusionPipeline
-from huggingface_hub import hf_hub_download
 
-# Download the LoRA model
-LORA_PATH = hf_hub_download(
-    repo_id="azalio/meme1",
-    filename="my_first_flux_lora_v1.safetensors"
-)
+# Use local LoRA model
+LORA_PATH = "./my_first_flux_lora_v1.safetensors"
 
 # Load base model and apply LoRA weights
 pipe = StableDiffusionPipeline.from_pretrained(
